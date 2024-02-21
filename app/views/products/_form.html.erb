@@ -1,0 +1,98 @@
+<%= form_with(model: product) do |form| %>
+  <% if product.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(product.errors.count, "error") %> prohibited this product from being saved:</h2>
+
+      <ul>
+        <% product.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name, style: "display: block" %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%#= form.label :type, style: "display: block" %>
+    <%#= form.text_field :type %> 
+    <%#CONTAINS [Disposables, Ejuice%>
+    <%= form.label :type, style: "display: block" %>
+    <%= form.select :type, Product.types, {include_blank: false} %>
+  </div>
+  <div x-data="{ showSizeField: false }" x-init="() => { showSizeField = document.getElementById('productType').value === 'Disposables'; }">
+    <%= form.label :size, "Size", style: "display: block;" %>
+    <%= form.text_field :size, style: "display: none;", data: { "alpine-show" => "showSizeField" }, required: false %>
+  </div>
+
+  <div class="field">
+    <%= form.label :access %>
+    <%= form.select :access, Product.accesses, prompt: "Website to scrape?", id: "pokemon-access" %>
+  </div>
+
+
+
+  <div>
+    <%= form.label :price, style: "display: block" %>
+    <%= form.number_field :price %>
+  </div>
+
+  <div>
+    <%= form.label :desc, style: "display: block" %>
+    <%= form.text_area :desc %>
+  </div>
+
+  <div>
+    <%= form.label :published, style: "display: block" %>
+    <%= form.check_box :published %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
+
+
+<%= form_with(model: @product) do |form| %>
+  <div x-data="{ productType: '' }">
+    <%= form.label :type, style: "display: block" %>
+    <%= form.select :type, Product.types.keys, {include_blank: false}, { id: 'productType', 'x-model': 'productType' } %>
+  </div>
+
+  <div x-show="productType === 'Ejuice'">
+    <%= form.label :size, "Size", style: "display: block;" %>
+    <%= form.text_field :size, required: false %>
+  </div>
+
+  <div>
+    <%= form.submit "Submit" %>
+  </div>
+<% end %>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('product_form');
+      const select = document.getElementById('product_type');
+
+      select.addEventListener('change', function() {
+        form.submit();
+      });
+    });
+  </script>
+
+
+  <%# <div x-data="{ submitForm: false }"></div>
+    <label for="productType">Select Product:</label>
+    <select id="productType" @change="submitForm = true">
+      <option value="Ejuice">Ejuice</option>
+      <option value="Disposables">Disposables</option>
+    </select>
+
+    <template x-if="submitForm">
+      <form id="productForm" action="/your/action/here" method="get">
+        <input type="hidden" name="selected_product" x-bind:value="$el.value">
+      </form> %>
+
